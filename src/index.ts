@@ -1,4 +1,5 @@
-import * as fs from 'fs';
+import fs from 'node:fs';
+import path from 'node:path';
 import { replaceInFile } from 'replace-in-file';
 import simpleGit from 'simple-git';
 import figlet from 'figlet';
@@ -14,11 +15,12 @@ const PROJECT_ERROR = 1;
 const GIT_ERROR = 2;
 const MIGRATE_ERROR = 3;
 
+const pwd = path.resolve();
+
 // 確認是在專案目錄下執行
 if (!fs.existsSync('./pom.xml')) {
-    console.warn('pom.xml 不存在，請切換到專案目錄下再執行本程式。')
+    console.warn(`${pwd} 目錄下沒有 pom.xml，請切換到專案目錄下再試一次。`)
     process.exit(PROJECT_ERROR)
-
 }
 
 // 確認專案在 git 管控，而且沒有什麼髒東西
