@@ -2,8 +2,9 @@
   "name": "sdp-migrator",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "bin": {
-    "sdp-migrator": "./bin/sdp-migrator"
+    "sdp-migrator": "bin/sdp-migrator.js"
   },
   "scripts": {
     "start": "ts-node src/index.ts",
