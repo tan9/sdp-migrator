@@ -47,18 +47,20 @@ replaceInFile({
     files: '**/pom.xml',
     from: /(<parent>.*<artifactId>fdc<\/artifactId>.*)<version>2.0.0<\/version>/s,
     to: '$1<version>3.0.0-SNAPSHOT</version>',
-}).then(results => {
-    let replacedFiles = results.filter(result => result.hasChanged);
-    if (replacedFiles.length > 0) {
-        console.log("Parent POM 版本已更新為 3.0.0-SNAPSHOT。");
-        replacedFiles.forEach(
-            replacedFile => {
-                git.add(replacedFile.file)
-            }
-        )
-        git.commit("Upgrade SDP parent to 3.0.0-SNAPSHOT.")
-    }
-}).catch(error => {
-    console.error('更新 parent POM 版本時發生錯誤:', error);
-    process.exit(MIGRATE_ERROR);
-});
+})
+    .then(results => {
+        let replacedFiles = results.filter(result => result.hasChanged)
+        if (replacedFiles.length > 0) {
+            console.log("Parent POM 版本已更新為 3.0.0-SNAPSHOT。");
+            replacedFiles.forEach(
+                replacedFile => {
+                    git.add(replacedFile.file)
+                }
+            )
+            git.commit("Upgrade SDP parent to 3.0.0-SNAPSHOT.")
+        }
+    })
+    .catch(error => {
+        console.error('更新 parent POM 版本時發生錯誤:', error)
+        process.exit(MIGRATE_ERROR)
+    });
