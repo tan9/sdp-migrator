@@ -4,10 +4,14 @@ import simpleGit from 'simple-git';
 
 const git = simpleGit()
 
+const PROJECT_ERROR = 1;
+const GIT_ERROR = 2;
+const MIGRATE_ERROR = 3;
+
 // 確認是在專案目錄下執行
 if (!fs.existsSync('./pom.xml')) {
     console.warn('pom.xml 不存在，請切換到專案目錄下再執行本程式。')
-    process.exit(1)
+    process.exit(PROJECT_ERROR)
 
 }
 
@@ -16,7 +20,7 @@ git.checkIsRepo()
     .then(isRepo => {
         if (!isRepo) {
             console.log("路徑不在 git 版控中，無法進行升版。")
-            process.exit(2);
+            process.exit(GIT_ERROR)
         }
     })
 
@@ -24,7 +28,7 @@ git.status()
     .then(status => {
         if (!status.isClean()) {
             console.log("git 目錄中有未 commit 的異動，請確認所有異動都已儲存後再試一次。")
-            process.exit(2);
+            process.exit(GIT_ERROR);
         }
     })
 
@@ -46,5 +50,5 @@ replaceInFile({
     }
 }).catch(error => {
     console.error('更新 parent POM 版本時發生錯誤:', error);
-    process.exit(3);
+    process.exit(MIGRATE_ERROR);
 });
