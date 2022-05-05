@@ -1,6 +1,12 @@
 import * as fs from 'fs';
 import { replaceInFile } from 'replace-in-file';
 import simpleGit from 'simple-git';
+import figlet from 'figlet';
+
+// 列印 banner
+console.log(
+    figlet.textSync('SDP Migrator') + '\n'
+)
 
 const git = simpleGit()
 
