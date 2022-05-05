@@ -36,7 +36,9 @@ git.status()
     .then(status => {
         if (!status.isClean()) {
             console.log("git 目錄中有未 commit 的異動，請確認所有異動都已儲存後再試一次。")
-            process.exit(GIT_ERROR);
+            console.log('\n末儲存變更的檔案如下:')
+            console.debug(status.files.map(file => file.path))
+            process.exit(GIT_ERROR)
         }
     })
 
