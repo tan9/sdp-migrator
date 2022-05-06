@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import figlet from 'figlet';
 import { exit } from './exception.js';
-import { commitReplacedResults, deleteFilesAndCommit, git } from './git.js';
+import { commitReplacedResults, deleteFilesAndCommit, git, moveFilesAndCommit } from './git.js';
 import { GIT_ERROR, MIGRATE_ERROR, PROJECT_ERROR } from './constants.js';
 import replaceInFilePkg from 'replace-in-file';
 import glob from 'glob-promise';
@@ -104,4 +104,20 @@ await glob('**/mvc-config.xml')
     )
     .catch(error =>
         exit(MIGRATE_ERROR, `刪除 mvc-config.xml 時發生錯誤: ${error}`)
+    )
+
+// 搬移 tiles-front.xml 設定檔
+await Promise.resolve(
+    glob
+        .sync('**/tiles-front.xml')
+        .filter(file => file.indexOf('webapp') > -1)
+        .map(file => {
+            return {'from': file, 'to': file.replace(/webapp[\/\\]WEB-INF/, 'resources')}
+        }))
+    .then(
+        moveFilesAndCommit('異動 tiles-config.xml 位置')
+    )
+    .catch(error => {
+            exit(MIGRATE_ERROR, `異動 tiles-config.xml 位置時發生錯誤: ${error}`)
+        }
     )
