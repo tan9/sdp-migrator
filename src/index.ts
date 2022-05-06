@@ -6,8 +6,10 @@ import { commitReplacedResults, deleteFilesAndCommit, git, moveFilesAndCommit } 
 import { GIT_ERROR, MIGRATE_ERROR, PROJECT_ERROR } from './constants.js';
 import replaceInFilePkg from 'replace-in-file';
 import glob from 'glob-promise';
+import { XMLParser } from 'fast-xml-parser';
 
 const {replaceInFile} = replaceInFilePkg
+const xmlParser = new XMLParser()
 
 // 列印 banner
 console.log(
@@ -19,6 +21,13 @@ const pwd = path.resolve();
 // 確認是在專案目錄下執行
 if (!fs.existsSync('./pom.xml')) {
     exit(PROJECT_ERROR, `${pwd} 目錄下沒有 pom.xml，請切換到專案目錄下再試一次。`)
+}
+
+const pom = xmlParser.parse(fs.readFileSync('./pom.xml'))
+const projectId = pom.project?.artifactId
+
+if (!/^[a-z]{3}$/.test(projectId)) {
+    exit(PROJECT_ERROR, `"${projectId}" 不是有效的專案，請切換到有效的 SDP 應用系統專案下再試一次。`)
 }
 
 // 確認專案在 git 管控，而且沒有什麼髒東西
@@ -38,6 +47,9 @@ git.status()
             exit(GIT_ERROR)
         }
     })
+
+// 開工
+console.log(`開始對 ${projectId} 應用系統進行 SDP 升版...\n`)
 
 // 更新 Parent POM 版本
 await replaceInFile({
@@ -121,3 +133,4 @@ await Promise.resolve(
             exit(MIGRATE_ERROR, `異動 tiles-config.xml 位置時發生錯誤: ${error}`)
         }
     )
+
