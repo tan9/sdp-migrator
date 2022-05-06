@@ -2,9 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import figlet from 'figlet';
 import { exit } from './exception.js';
-import { commitReplacedResults, git } from './git.js';
+import { commitReplacedResults, deleteFilesAndCommit, git } from './git.js';
 import { GIT_ERROR, MIGRATE_ERROR, PROJECT_ERROR } from './constants.js';
 import replaceInFilePkg from 'replace-in-file';
+import glob from 'glob-promise';
 
 const {replaceInFile} = replaceInFilePkg
 
@@ -87,3 +88,20 @@ await replaceInFile({
 ).catch(error => {
     exit(MIGRATE_ERROR, `移除 pom.xml 中的空 build 設定時發生錯誤: ${error}`)
 });
+
+// 刪除專案中不必要的設定檔
+await glob('**/persistence-*.xml')
+    .then(
+        deleteFilesAndCommit('刪除 persistence-*.xml')
+    )
+    .catch(error =>
+        exit(MIGRATE_ERROR, `刪除 persistence-*.xml 時發生錯誤: ${error}`)
+    )
+
+await glob('**/mvc-config.xml')
+    .then(
+        deleteFilesAndCommit('刪除 mvc-config.xml')
+    )
+    .catch(error =>
+        exit(MIGRATE_ERROR, `刪除 mvc-config.xml 時發生錯誤: ${error}`)
+    )
