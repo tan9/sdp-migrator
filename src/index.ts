@@ -2,8 +2,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import figlet from 'figlet';
 import { exit } from './exception.js';
-import { git, replaceInFileAndCommit } from './git.js';
+import { commitReplacedResults, git } from './git.js';
 import { GIT_ERROR, MIGRATE_ERROR, PROJECT_ERROR } from './constants.js';
+import replaceInFilePkg from 'replace-in-file';
+
+const {replaceInFile} = replaceInFilePkg
 
 // 列印 banner
 console.log(
@@ -36,25 +39,27 @@ git.status()
     })
 
 // 更新 Parent POM 版本
-await replaceInFileAndCommit(
-    '將 Parent POM 更新為 3.0.0-SNAPSHOT。',
-    {
-        files: '**/pom.xml',
-        from: /(<parent>.*<artifactId>fdc<\/artifactId>.*)<version>2.0.0<\/version>/s,
-        to: '$1<version>3.0.0-SNAPSHOT</version>',
-    }
+await replaceInFile({
+    files: '**/pom.xml',
+    from: /(<parent>.*<artifactId>fdc<\/artifactId>.*)<version>2.0.0<\/version>/s,
+    to: '$1<version>3.0.0-SNAPSHOT</version>',
+}).then(replaceResults =>
+    commitReplacedResults(
+        '將 Parent POM 更新為 3.0.0-SNAPSHOT',
+        replaceResults)
 ).catch(error => {
     exit(MIGRATE_ERROR, `更新 parent POM 版本時發生錯誤: ${error}`)
 });
 
 // 修改 build 設定
-await replaceInFileAndCommit(
-    '移除 build.outputDirectory 設定。',
-    {
-        files: '**/pom.xml',
-        from: /^.*<outputDirectory>src\/main\/webapp\/WEB-INF\/classes<\/outputDirectory>.*$\n/m,
-        to: '',
-    }
+await replaceInFile({
+    files: '**/pom.xml',
+    from: /^.*<outputDirectory>src\/main\/webapp\/WEB-INF\/classes<\/outputDirectory>.*$\n/m,
+    to: '',
+}).then(replaceResults =>
+    commitReplacedResults(
+        '移除 build.outputDirectory 設定',
+        replaceResults)
 ).catch(error => {
     exit(MIGRATE_ERROR, `移除 build.outputDirectory 設定時發生錯誤: ${error}`)
 });
