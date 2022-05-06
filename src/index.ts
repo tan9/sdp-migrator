@@ -44,50 +44,50 @@ await replaceInFile({
     files: '**/pom.xml',
     from: /(<parent>.*<artifactId>fdc<\/artifactId>.*)<version>2.0.0<\/version>/s,
     to: '$1<version>3.0.0-SNAPSHOT</version>',
-}).then(replaceResults =>
-    commitReplacedResults(
-        '將 Parent POM 更新為 3.0.0-SNAPSHOT',
-        replaceResults)
-).catch(error => {
-    exit(MIGRATE_ERROR, `更新 parent POM 版本時發生錯誤: ${error}`)
-});
+})
+    .then(
+        commitReplacedResults('將 Parent POM 更新為 3.0.0-SNAPSHOT')
+    )
+    .catch(error => {
+        exit(MIGRATE_ERROR, `更新 parent POM 版本時發生錯誤: ${error}`)
+    })
 
 // 移除 POM 已經在上游管控或是不需要的 build 設定
 await replaceInFile({
     files: '**/pom.xml',
     from: /^.*<outputDirectory>src\/main\/webapp\/WEB-INF\/classes<\/outputDirectory>.*$\n/m,
     to: '',
-}).then(replaceResults =>
-    commitReplacedResults(
-        '移除 pom.xml 的 build.outputDirectory 設定',
-        replaceResults)
-).catch(error => {
-    exit(MIGRATE_ERROR, `移除 pom.xml 的 build.outputDirectory 設定時發生錯誤: ${error}`)
-});
+})
+    .then(
+        commitReplacedResults('移除 pom.xml 的 build.outputDirectory 設定')
+    )
+    .catch(error => {
+        exit(MIGRATE_ERROR, `移除 pom.xml 的 build.outputDirectory 設定時發生錯誤: ${error}`)
+    })
 
 await replaceInFile({
     files: '**/pom.xml',
     from: /^\s*?<plugin>.*?<artifactId>maven-compiler-plugin<\/artifactId>.*?<\/plugin>\s*?$\n/ms,
     to: '',
-}).then(replaceResults =>
-    commitReplacedResults(
-        '移除 pom.xml 的 maven-compiler-plugin 設定',
-        replaceResults)
-).catch(error => {
-    exit(MIGRATE_ERROR, `移除 pom.xml 的 maven-compiler-plugin 設定時發生錯誤: ${error}`)
-});
+})
+    .then(
+        commitReplacedResults('移除 pom.xml 的 maven-compiler-plugin 設定')
+    )
+    .catch(error => {
+        exit(MIGRATE_ERROR, `移除 pom.xml 的 maven-compiler-plugin 設定時發生錯誤: ${error}`)
+    })
 
 await replaceInFile({
     files: '**/pom.xml',
     from: /^[ \t]*?<build>\s*?<plugins>\s*?<\/plugins>\s*?<\/build>[ \t]*?$\n/ms,
     to: '',
-}).then(replaceResults =>
-    commitReplacedResults(
-        '移除 pom.xml 中的空 build 設定',
-        replaceResults)
-).catch(error => {
-    exit(MIGRATE_ERROR, `移除 pom.xml 中的空 build 設定時發生錯誤: ${error}`)
-});
+})
+    .then(
+        commitReplacedResults('移除 pom.xml 中的空 build 設定')
+    )
+    .catch(error => {
+        exit(MIGRATE_ERROR, `移除 pom.xml 中的空 build 設定時發生錯誤: ${error}`)
+    })
 
 // 刪除專案中不必要的設定檔
 await glob('**/persistence-*.xml')
