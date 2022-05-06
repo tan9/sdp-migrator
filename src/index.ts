@@ -1,8 +1,9 @@
 import fs from 'node:fs';
 import figlet from 'figlet';
-import { exit } from './exception.js';
-import { commitReplacedResults, deleteFilesAndCommit, git, moveFilesAndCommit } from './git.js';
 import { GIT_ERROR, MIGRATE_ERROR, PROJECT_ERROR } from './constants.js';
+import { exit } from './exception.js';
+import { bootify } from './bootify.js';
+import { commitReplacedResults, deleteFilesAndCommit, git, moveFilesAndCommit } from './git.js';
 import replaceInFilePkg from 'replace-in-file';
 import glob from 'glob-promise';
 import { XMLParser } from 'fast-xml-parser';
@@ -131,3 +132,9 @@ await Promise.resolve(
         }
     )
 
+// 針對 Web 模組一個一個 Spring Bootify
+glob
+    .sync('**/web.xml')
+    .map(webModule => webModule.substring(0, webModule.indexOf('/')))
+    .filter(webModule => pom.project.modules.module.includes(webModule))
+    .forEach(bootify)
