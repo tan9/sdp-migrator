@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import path from 'node:path';
 import figlet from 'figlet';
 import { exit } from './exception.js';
 import { commitReplacedResults, deleteFilesAndCommit, git, moveFilesAndCommit } from './git.js';
@@ -16,11 +15,9 @@ console.log(
     figlet.textSync('SDP Migrator') + '\n'
 )
 
-const pwd = path.resolve();
-
 // 確認是在專案目錄下執行
 if (!fs.existsSync('./pom.xml')) {
-    exit(PROJECT_ERROR, `${pwd} 目錄下沒有 pom.xml，請切換到專案目錄下再試一次。`)
+    exit(PROJECT_ERROR, `${process.cwd()} 並不是有效的 Maven 專案，請切換到專案目錄下再試一次。`)
 }
 
 const pom = xmlParser.parse(fs.readFileSync('./pom.xml'))
