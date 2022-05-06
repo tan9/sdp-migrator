@@ -4,12 +4,10 @@ import { GIT_ERROR, MIGRATE_ERROR, PROJECT_ERROR } from './constants.js';
 import { exit } from './exception.js';
 import { bootify } from './bootify.js';
 import { commitReplacedResults, deleteFilesAndCommit, git, moveFilesAndCommit } from './git.js';
+import { readXml } from './xml.js';
 import replaceInFilePkg from 'replace-in-file';
 import glob from 'glob-promise';
-import { XMLParser } from 'fast-xml-parser';
-
 const {replaceInFile} = replaceInFilePkg
-const xmlParser = new XMLParser()
 
 // 列印 banner
 console.log(
@@ -21,7 +19,7 @@ if (!fs.existsSync('./pom.xml')) {
     exit(PROJECT_ERROR, `${process.cwd()} 並不是有效的 Maven 專案，請切換到專案目錄下再試一次。`)
 }
 
-const pom = xmlParser.parse(fs.readFileSync('./pom.xml'))
+const pom = readXml('./pom.xml')
 const projectId = pom.project?.artifactId
 
 if (!/^[a-z]{3}$/.test(projectId)) {
