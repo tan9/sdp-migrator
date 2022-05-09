@@ -206,3 +206,15 @@ await replaceInFile({
     .catch(error => {
         exit(MIGRATE_ERROR, `將 sun.misc.BASE64 改寫為 java.util.Base64 時發生錯誤: ${error}`)
     })
+
+await replaceInFile({
+    files: '**/Sche001wController.java',
+    from: /.getName\(\)/g,
+    to: '.getKey().getName()',
+})
+    .then(
+        commitReplacedResults('改用 Quartz 2 API')
+    )
+    .catch(error => {
+        exit(MIGRATE_ERROR, `改用 Quartz 2 API 時發生錯誤: ${error}`)
+    })
