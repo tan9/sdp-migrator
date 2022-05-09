@@ -97,6 +97,18 @@ await replaceInFile({
         exit(MIGRATE_ERROR, `移除 pom.xml 中的空 build 設定時發生錯誤: ${error}`)
     })
 
+await replaceInFile({
+    files: `**/src/**/${projectId}-beans-config.xml`,
+    from: new RegExp(`^([ \\t\\r\\n]*)([ \\t]*?<!--.+?-->[ \\t]*?\\n)?[ \\t]+?<context:component-scan\\s+base-package="gov\\.fdc\\.${projectId}"[\\s\\S]*?<\\/context:component-scan>[\\s\\n\\r]*$\\n`, 'gm'),
+    to: '\n',
+})
+    .then(
+        commitReplacedResults(`移除 ${projectId}-beans-config.xml 裡的 component-scan 設定`)
+    )
+    .catch(error => {
+        exit(MIGRATE_ERROR, `移除 ${projectId}-beans-config.xml 裡的 component-scan 設定時發生錯誤: ${error}`)
+    })
+
 // 刪除專案中不必要的設定檔
 await glob('**/src/**/persistence-*.xml')
     .then(
