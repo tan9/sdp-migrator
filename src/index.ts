@@ -138,6 +138,14 @@ await glob('**/mvc-config.xml')
         exit(MIGRATE_ERROR, `刪除 mvc-config.xml 時發生錯誤: ${error}`)
     )
 
+await glob('**/src/**/logback.xml')
+    .then(
+        deleteFilesAndCommit('刪除 logback.xml')
+    )
+    .catch(error =>
+        exit(MIGRATE_ERROR, `刪除 logback.xml 時發生錯誤: ${error}`)
+    )
+
 // 搬移 tiles-front.xml 設定檔
 await Promise.resolve(
     glob
