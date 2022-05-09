@@ -98,7 +98,7 @@ await replaceInFile({
     })
 
 // 刪除專案中不必要的設定檔
-await glob('**/persistence-*.xml')
+await glob('**/src/**/persistence-*.xml')
     .then(
         deleteFilesAndCommit('刪除 persistence-*.xml')
     )
@@ -117,7 +117,7 @@ await glob('**/mvc-config.xml')
 // 搬移 tiles-front.xml 設定檔
 await Promise.resolve(
     glob
-        .sync('**/tiles-front.xml')
+        .sync('**/src/**/tiles-front.xml')
         .filter(file => file.indexOf('webapp') > -1)
         .map(file => {
             return {'from': file, 'to': file.replace(/webapp[\/\\]WEB-INF/, 'resources')}
