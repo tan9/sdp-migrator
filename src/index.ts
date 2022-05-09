@@ -50,7 +50,7 @@ console.log(`開始對 ${projectId} 應用系統進行 SDP 升版...\n`)
 // 更新 Parent POM 版本
 await replaceInFile({
     files: '**/pom.xml',
-    from: /(<parent>.*<artifactId>fdc<\/artifactId>.*)<version>2.0.0<\/version>/s,
+    from: /(<parent>.*<artifactId>fdc<\/artifactId>.*)<version>.*?<\/version>/s,
     to: '$1<version>3.0.0-SNAPSHOT</version>',
 })
     .then(
