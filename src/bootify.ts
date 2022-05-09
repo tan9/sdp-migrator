@@ -1,4 +1,4 @@
-import { CODE_GENERATION_ERROR } from './constants.js';
+import { CODE_GENERATION_ERROR, MIGRATE_ERROR } from './constants.js';
 import { exit } from './exception.js';
 import { git } from './git.js';
 import { renderFile } from './template.js';
@@ -8,6 +8,9 @@ import commonPathPrefix from 'common-path-prefix';
 import { pascalCase } from 'pascal-case';
 import fs from 'node:fs';
 import path from 'node:path';
+import replaceInFilePkg from 'replace-in-file';
+
+const {replaceInFile} = replaceInFilePkg
 
 export async function bootify(webModule: string): Promise<void> {
     console.log(`將 "${webModule}" 網頁模組轉換成 Spring Boot 架構...`)
@@ -22,6 +25,32 @@ export async function bootify(webModule: string): Promise<void> {
         const isWebServiceModule = pom.project.artifactId.endsWith('-webservice')
 
         let simpleGit = git;
+
+        // 如果是 web-service 模組，需要先確認 dependencies 有沒有 cxf-ws-spring-boot-starter
+        if (isWebServiceModule &&
+            pom.project.dependencies.dependency.every(
+                (dependency: { artifactId: string; }) => dependency.artifactId !== 'cxf-ws-spring-boot-starter'
+            )) {
+
+            await replaceInFile({
+                files: '**/pom.xml',
+                from: /([\r\n]+(?:[ ]{0,5}|[\t]{0,1})<\/dependencies>)/g,
+                to: `
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-ws-spring-boot-starter</artifactId>
+            <version>3.5.2</version>
+        </dependency>$1`
+            })
+                .then(() => {
+                    console.log(` - 在 pom.xml 中加入 cxf-ws-spring-boot-starter`)
+                    simpleGit = simpleGit.add(path.resolve(`pom.xml`))
+                })
+                .catch(error => {
+                    exit(MIGRATE_ERROR, `在 pom.xml 中加入 cxf-ws-spring-boot-starter 時發生錯誤: ${error}`)
+                })
+        }
 
         // 開始寫 Bootstrap Class
         process.chdir('./src/main/java')
