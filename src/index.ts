@@ -51,8 +51,8 @@ console.log(`開始對 ${projectId} 應用系統進行 SDP 升版...\n`)
 // 更新 Parent POM 版本
 await replaceInFile({
     files: '**/pom.xml',
-    from: /(<parent>.*<artifactId>fdc<\/artifactId>.*)<version>.*?<\/version>/s,
-    to: '$1<version>3.0.0-SNAPSHOT</version>',
+    from: /(<parent>.*<artifactId>fdc<\/artifactId>.*<version>).*?(<\/version>.*<\/parent>)/s,
+    to: '$13.0.0-SNAPSHOT$2',
 })
     .then(
         commitReplacedResults('將 Parent POM 更新為 3.0.0-SNAPSHOT')
