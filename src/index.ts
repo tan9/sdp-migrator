@@ -209,7 +209,7 @@ await replaceInFile({
 
 await replaceInFile({
     files: '**/Sche001wController.java',
-    from: /.getName\(\)/g,
+    from: /(.getKey\(\))?.getName\(\)/g,
     to: '.getKey().getName()',
 })
     .then(
