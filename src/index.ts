@@ -98,6 +98,18 @@ await replaceInFile({
     })
 
 await replaceInFile({
+    files: '**/pom.xml',
+    from: /http:\/\/192.168.30.67:8080\/nexus\//g,
+    to: 'http://192.168.30.95/nexus/',
+})
+    .then(
+        commitReplacedResults('修正 pom.xml repository 的網址')
+    )
+    .catch(error => {
+        exit(MIGRATE_ERROR, `修正 pom.xml repository 的網址時發生錯誤: ${error}`)
+    })
+
+await replaceInFile({
     files: `**/src/**/${projectId}-beans-config.xml`,
     from: new RegExp(`^([ \\t\\r\\n]*)([ \\t]*?<!--.+?-->[ \\t]*?\\n)?[ \\t]+?<context:component-scan\\s+base-package="gov\\.fdc\\.${projectId}"[\\s\\S]*?<\\/context:component-scan>[\\s\\n\\r]*$\\n`, 'gm'),
     to: '\n',
