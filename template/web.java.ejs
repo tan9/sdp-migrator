@@ -1,0 +1,32 @@
+package <%- packageName %>;
+
+import gov.fdc.common.annotation.FDCAnnotationBeanNameGenerator;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;<% if (!isWebModule) {%>
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;<% } %><% if (isWebModule) { %>
+import org.springframework.boot.web.servlet.ServletComponentScan;<% } %><% if (isWebServiceModule) { %>
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+
+import javax.jws.WebService;<% } %>
+
+@SpringBootApplication(<% if (!isWebModule) {%>
+    exclude = SecurityAutoConfiguration.class,<% } %><% if (!isWebServiceModule) { %>
+    scanBasePackages = {<%- scanBasePackages.map(package => `"${package}"`).join(', ')  %>},<% } %>
+    nameGenerator = FDCAnnotationBeanNameGenerator.class
+)<% if (isWebModule) { %>
+@ServletComponentScan<% } %><% if (isWebServiceModule) { %>
+@ComponentScan(
+        basePackages = {<%- scanBasePackages.map(package => `"${package}"`).join(', ')  %>},
+        includeFilters = {
+                @ComponentScan.Filter(type = FilterType.ANNOTATION, value = {WebService.class})
+        },
+        nameGenerator = FDCAnnotationBeanNameGenerator.class
+)<% } %>
+public class <%- bootstrapClassName %> {
+
+    public static void main(String[] args) {
+        SpringApplication.run(<%= bootstrapClassName%>.class, args);
+    }
+
+}

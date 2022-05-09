@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: <%- projectId %>
+  main:
+    allow-bean-definition-overriding: true # [SDP-NEXT] FIXME remove overriding?
+    allow-circular-references: true # [SDP-NEXT] FIXME remove circular reference
+  sql:
+    init:
+      enabled: false # [SDP-NEXT] FIXME pull up to SDP?
+  jpa:
+    open-in-view: false # [SDP-NEXT] FIXME pull up to SDP?
+
+server:
+  servlet:
+    context-path: /<%- contextPath %>
+  port: <%- serverPort %>
+<% if (isWebServiceModule) { %>
+cxf:
+  path: '/'
+<% } %>

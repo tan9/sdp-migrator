@@ -143,8 +143,11 @@ await Promise.resolve(
     )
 
 // 針對 Web 模組一個一個 Spring Bootify
-glob
+const webModules = glob
     .sync('**/web.xml')
     .map(webModule => webModule.substring(0, webModule.indexOf('/')))
     .filter(webModule => pom.project.modules.module.includes(webModule))
-    .forEach(bootify)
+
+for (const webModule of webModules) {
+   await bootify(webModule)
+}
