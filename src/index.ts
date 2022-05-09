@@ -7,7 +7,8 @@ import { commitReplacedResults, deleteFilesAndCommit, git, moveFilesAndCommit } 
 import { readXml } from './xml.js';
 import replaceInFilePkg from 'replace-in-file';
 import glob from 'glob-promise';
-const {replaceInFile} = replaceInFilePkg
+
+const {replaceInFile, replaceInFileSync} = replaceInFilePkg
 
 // 列印 banner
 console.log(
@@ -171,3 +172,37 @@ const webModules = glob
 for (const webModule of webModules) {
     await bootify(webModule)
 }
+
+// Modernize
+await replaceInFile({
+    files: '**/src/**/*.java',
+    from: /(import sun.misc.BASE64..coder;([\n\r]+import sun.misc.BASE64..coder;)?)/,
+    to: 'import java.util.Base64;',
+})
+    .then(
+        results => {
+            let changed = results
+                .filter(result => result.hasChanged);
+
+            changed.forEach(
+                result => {
+                    replaceInFileSync({
+                        files: result.file,
+                        from: /new BASE64Encoder\(\)\.encodeBuffer\(/g,
+                        to: 'Base64.getEncoder().encodeToString('
+                    })
+                    replaceInFileSync({
+                        files: result.file,
+                        from: /new BASE64Decoder\(\)\.decodeBuffer\(/g,
+                        to: 'Base64.getDecoder().decode('
+                    })
+                })
+            return changed
+        }
+    )
+    .then(
+        commitReplacedResults('將 sun.misc.BASE64 改寫為 java.util.Base64')
+    )
+    .catch(error => {
+        exit(MIGRATE_ERROR, `將 sun.misc.BASE64 改寫為 java.util.Base64 時發生錯誤: ${error}`)
+    })
