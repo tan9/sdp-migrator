@@ -26,7 +26,7 @@ export async function bootify(webModule: string): Promise<void> {
 
         let simpleGit = git;
 
-        // 如果是 web-service 模組，需要先確認 dependencies 有沒有 cxf-ws-spring-boot-starter-jaxws
+        // 如果是 web-service 模組，需要先確認 dependencies 有沒有 cxf-spring-boot-starter-jaxws
         if (isWebServiceModule &&
             pom.project.dependencies.dependency.every(
                 (dependency: { artifactId: string; }) => dependency.artifactId !== 'cxf-spring-boot-starter-jaxws'
@@ -39,16 +39,16 @@ export async function bootify(webModule: string): Promise<void> {
 
         <dependency>
             <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-ws-spring-boot-starter</artifactId>
+            <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
             <version>3.5.2</version>
         </dependency>$1`
             })
                 .then(() => {
-                    console.log(` - 在 pom.xml 中加入 cxf-ws-spring-boot-starter-jaxws`)
+                    console.log(` - 在 pom.xml 中加入 cxf-spring-boot-starter-jaxws`)
                     simpleGit = simpleGit.add(path.resolve(`pom.xml`))
                 })
                 .catch(error => {
-                    exit(MIGRATE_ERROR, `在 pom.xml 中加入 cxf-ws-spring-boot-starter-jaxws 時發生錯誤: ${error}`)
+                    exit(MIGRATE_ERROR, `在 pom.xml 中加入 cxf-spring-boot-starter-jaxws 時發生錯誤: ${error}`)
                 })
         }
 
