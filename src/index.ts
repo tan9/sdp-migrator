@@ -123,10 +123,10 @@ await Promise.resolve(
             return {'from': file, 'to': file.replace(/webapp[\/\\]WEB-INF/, 'resources')}
         }))
     .then(
-        moveFilesAndCommit('異動 tiles-config.xml 位置')
+        moveFilesAndCommit('異動 tiles-front.xml 位置')
     )
     .catch(error => {
-            exit(MIGRATE_ERROR, `異動 tiles-config.xml 位置時發生錯誤: ${error}`)
+            exit(MIGRATE_ERROR, `異動 tiles-front.xml 位置時發生錯誤: ${error}`)
         }
     )
 
