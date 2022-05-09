@@ -11,9 +11,9 @@ import org.springframework.context.annotation.FilterType;
 import javax.jws.WebService;<% } %>
 
 @SpringBootApplication(<% if (!isWebModule) {%>
-    exclude = SecurityAutoConfiguration.class,<% } %><% if (!isWebServiceModule) { %>
-    scanBasePackages = {<%- scanBasePackages.map(package => `"${package}"`).join(', ')  %>},<% } %>
-    nameGenerator = FDCAnnotationBeanNameGenerator.class
+        exclude = SecurityAutoConfiguration.class,<% } %><% if (!isWebServiceModule) { %>
+        scanBasePackages = {<%- scanBasePackages.map(package => `"${package}"`).join(', ')  %>},<% } %>
+        nameGenerator = FDCAnnotationBeanNameGenerator.class
 )<% if (isWebModule) { %>
 @ServletComponentScan<% } %><% if (isWebServiceModule) { %>
 @ComponentScan(
