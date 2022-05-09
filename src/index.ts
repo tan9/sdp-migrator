@@ -169,5 +169,5 @@ const webModules = glob
     .filter(webModule => pom.project.modules.module.includes(webModule))
 
 for (const webModule of webModules) {
-   await bootify(webModule)
+    await bootify(webModule)
 }
