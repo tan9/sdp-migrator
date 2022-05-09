@@ -71,7 +71,7 @@ export async function bootify(webModule: string): Promise<void> {
             scanBasePackages.push(packageName)
         }
 
-        await renderFile('/template/web.java.ejs',
+        await renderFile('/template/bootstrap.java.ejs',
             {
                 bootstrapClassName,
                 packageName,
