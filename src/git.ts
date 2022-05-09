@@ -1,6 +1,5 @@
 import { ReplaceResult } from 'replace-in-file';
 import simpleGit from 'simple-git';
-import path from 'node:path';
 import fs from 'node:fs';
 
 export const git = simpleGit()
@@ -72,7 +71,7 @@ export function moveFilesAndCommit(operationName: string): (files: FileMove[]) =
             let simpleGit = git;
             files.forEach(
                 file => {
-                    let targetPath = file.to.substring(0, file.to.lastIndexOf(path.sep))
+                    let targetPath = file.to.substring(0, file.to.lastIndexOf('/'))
                     try {
                         fs.accessSync(targetPath)
                     } catch (e) {
