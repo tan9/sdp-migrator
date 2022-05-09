@@ -101,7 +101,7 @@ export async function bootify(webModule: string): Promise<void> {
         } else if (contextPath.endsWith('-webservice')) {
             serverPort = 8081
         } else if (contextPath.endsWith('-scheduler')) {
-            serverPort = 9090
+            serverPort = 9080
         } else {
             serverPort = 8088
         }
