@@ -13,8 +13,7 @@ spring:
 server:
   servlet:
     context-path: /<%- contextPath %>
-  port: <%- serverPort %>
-<% if (isWebServiceModule) { %>
+  port: <%- serverPort %><% if (isWebServiceModule) { %>
+
 cxf:
-  path: '/'
-<% } %>
+  path: '/'<% } %>
