@@ -112,8 +112,8 @@ await replaceInFile({
 
 await replaceInFile({
     files: `**/src/**/${projectId}-beans-config.xml`,
-    from: new RegExp(`^([ \\t\\r\\n]*)([ \\t]*?<!--.+?-->[ \\t]*?\\n)?[ \\t]+?<context:component-scan\\s+base-package="gov\\.fdc\\.${projectId}"[\\s\\S]*?<\\/context:component-scan>[\\s\\n\\r]*$\\n`, 'gm'),
-    to: '\n',
+    from: new RegExp(`^([ \\t\\r\\n]*)([ \\t]*?<!--.+?-->[ \\t\\r\\n]*?)?[ \\t]+?<context:component-scan\\s+base-package="gov\\.fdc\\.${projectId}"[\\s\\S]*?<\\/context:component-scan>[\\s\\n\\r]*$\\n`, 'gm'),
+    to: '\n\n',
 })
     .then(
         commitReplacedResults(`移除 ${projectId}-beans-config.xml 裡的 component-scan 設定`)
