@@ -64,6 +64,20 @@ await replaceInFile({
         exit(MIGRATE_ERROR, `更新 parent POM 版本時發生錯誤: ${error}`)
     })
 
+// 更新 Shared Libraries 指定的版本
+await replaceInFile({
+    files: '**/pom.xml',
+    from: /(<artifactId>shared-libraries<\/artifactId>.*?<version>).*?(<\/version>)/s,
+    to: '$1\${sdp.version}$2',
+    allowEmptyPaths: true,
+})
+    .then(
+        commitReplacedResults('將 Shared Libraries 對應到 SDP 版本')
+    )
+    .catch(error => {
+        exit(MIGRATE_ERROR, `更新 Shared Libraries 對應到 SDP 版本時發生錯誤: ${error}`)
+    })
+
 // 移除 POM 已經在上游管控或是不需要的 build 設定
 await replaceInFile({
     files: '**/pom.xml',
