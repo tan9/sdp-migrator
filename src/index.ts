@@ -65,7 +65,7 @@ await replaceInFile({
 // 移除 POM 已經在上游管控或是不需要的 build 設定
 await replaceInFile({
     files: '**/pom.xml',
-    from: /^.*<outputDirectory>src\/main\/webapp\/WEB-INF\/classes<\/outputDirectory>.*$\n/m,
+    from: /^.*<outputDirectory>src\/main\/webapp\/WEB-INF\/classes<\/outputDirectory>.*$\r?\n/m,
     to: '',
     allowEmptyPaths: true,
 })
@@ -78,7 +78,7 @@ await replaceInFile({
 
 await replaceInFile({
     files: '**/pom.xml',
-    from: /^\s*?<plugin>.*?<artifactId>maven-compiler-plugin<\/artifactId>.*?<\/plugin>\s*?$\n/ms,
+    from: /^\s*?<plugin>.*?<artifactId>maven-compiler-plugin<\/artifactId>.*?<\/plugin>\s*?$\r?\n/ms,
     to: '',
     allowEmptyPaths: true,
 })
@@ -91,8 +91,8 @@ await replaceInFile({
 
 await replaceInFile({
     files: '**/pom.xml',
-    from: /^[ \t]*?<build>\s*?<plugins>\s*?<\/plugins>\s*?<\/build>[ \t]*?$\n/ms,
-    to: '',
+    from: /^(?:\r?\n)+[ \t]*?<build>\s*?<plugins>\s*?<\/plugins>\s*?<\/build>[ \t]*?$(\r?\n)+/ms,
+    to: '$1',
     allowEmptyPaths: true,
 })
     .then(
