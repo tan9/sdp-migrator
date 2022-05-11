@@ -242,3 +242,17 @@ await replaceInFile({
     .catch(error => {
         exit(MIGRATE_ERROR, `改用 Quartz 2 API 時發生錯誤: ${error}`)
     })
+
+await replaceInFile({
+    files: '**/*-scheduler-beans-config.xml',
+    from: /org\.springframework\.scheduling\.quartz\.SimpleTriggerBean/g,
+    to: 'org.springframework.scheduling.quartz.SimpleTriggerFactoryBean',
+    allowEmptyPaths: true,
+})
+    .then(
+        commitReplacedResults(`${projectId}-scheduler-beans-config 改用新版 Spring Quartz 整合機制`)
+    )
+    .catch(error => {
+        exit(MIGRATE_ERROR, `${projectId}-scheduler-beans-config 改用新整 Spring Quartz 整合機制時發生錯誤: ${error}`)
+    })
+
