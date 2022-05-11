@@ -153,7 +153,7 @@ await glob('**/src/**/persistence-*.xml')
         exit(MIGRATE_ERROR, `刪除 persistence-*.xml 時發生錯誤: ${error}`)
     )
 
-await glob('**/src/**mvc-config.xml')
+await glob('**/src/**/mvc-config.xml')
     .then(
         deleteFilesAndCommit('刪除 mvc-config.xml')
     )
