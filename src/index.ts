@@ -248,6 +248,7 @@ await replaceInFile({
     from: /org\.springframework\.scheduling\.quartz\.SimpleTriggerBean/g,
     to: 'org.springframework.scheduling.quartz.SimpleTriggerFactoryBean',
     allowEmptyPaths: true,
+    ignore: ['**/classes/**/*-scheduler-beans-config.xml'],
 })
     .then(
         commitReplacedResults(`${projectId}-scheduler-beans-config 改用新版 Spring Quartz 整合機制`)
