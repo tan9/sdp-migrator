@@ -53,6 +53,7 @@ await replaceInFile({
     files: '**/pom.xml',
     from: /(<parent>.*<artifactId>fdc<\/artifactId>.*<version>).*?(<\/version>.*<\/parent>)/s,
     to: '$13.0.0-SNAPSHOT$2',
+    allowEmptyPaths: true,
 })
     .then(
         commitReplacedResults('將 Parent POM 更新為 3.0.0-SNAPSHOT')
@@ -66,6 +67,7 @@ await replaceInFile({
     files: '**/pom.xml',
     from: /^.*<outputDirectory>src\/main\/webapp\/WEB-INF\/classes<\/outputDirectory>.*$\n/m,
     to: '',
+    allowEmptyPaths: true,
 })
     .then(
         commitReplacedResults('移除 pom.xml 的 build.outputDirectory 設定')
@@ -78,6 +80,7 @@ await replaceInFile({
     files: '**/pom.xml',
     from: /^\s*?<plugin>.*?<artifactId>maven-compiler-plugin<\/artifactId>.*?<\/plugin>\s*?$\n/ms,
     to: '',
+    allowEmptyPaths: true,
 })
     .then(
         commitReplacedResults('移除 pom.xml 的 maven-compiler-plugin 設定')
@@ -90,6 +93,7 @@ await replaceInFile({
     files: '**/pom.xml',
     from: /^[ \t]*?<build>\s*?<plugins>\s*?<\/plugins>\s*?<\/build>[ \t]*?$\n/ms,
     to: '',
+    allowEmptyPaths: true,
 })
     .then(
         commitReplacedResults('移除 pom.xml 中的空 build 設定')
@@ -102,6 +106,7 @@ await replaceInFile({
     files: '**/pom.xml',
     from: /http:\/\/192.168.30.67:8080\/nexus\//g,
     to: 'http://192.168.30.95/nexus/',
+    allowEmptyPaths: true,
 })
     .then(
         commitReplacedResults('修正 pom.xml repository 的網址')
@@ -114,6 +119,7 @@ await replaceInFile({
     files: `**/src/**/${projectId}-beans-config.xml`,
     from: new RegExp(`^([ \\t\\r\\n]*)([ \\t]*?<!--.+?-->[ \\t\\r\\n]*?)?[ \\t]+?<context:component-scan\\s+base-package="gov\\.fdc\\.${projectId}"[\\s\\S]*?<\\/context:component-scan>[\\s\\n\\r]*$\\n`, 'gm'),
     to: '\n\n',
+    allowEmptyPaths: true,
 })
     .then(
         commitReplacedResults(`移除 ${projectId}-beans-config.xml 裡的 component-scan 設定`)
@@ -178,6 +184,7 @@ await replaceInFile({
     files: '**/src/**/*.java',
     from: /(import sun.misc.BASE64..coder;([\n\r]+import sun.misc.BASE64..coder;)?)/,
     to: 'import java.util.Base64;',
+    allowEmptyPaths: true,
 })
     .then(
         results => {
@@ -211,6 +218,7 @@ await replaceInFile({
     files: '**/Sche001wController.java',
     from: /(.getKey\(\))?.getName\(\)/g,
     to: '.getKey().getName()',
+    allowEmptyPaths: true,
 })
     .then(
         commitReplacedResults('改用 Quartz 2 API')
