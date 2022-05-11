@@ -150,7 +150,7 @@ await glob('**/src/**/logback.xml')
 // 搬移 tiles-front.xml 設定檔
 await Promise.resolve(
     glob
-        .sync('**/src/**/tiles-front.xml')
+        .sync('**/src/**/tiles-front.xml', {ignore: ['**/classes/**/tiles-front.xml']})
         .filter(file => file.indexOf('webapp') > -1)
         .map(file => {
             return {'from': file, 'to': file.replace(/webapp[\/\\]WEB-INF/, 'resources')}
