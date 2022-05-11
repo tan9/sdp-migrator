@@ -1,0 +1,8 @@
+
+@WebFilter(
+        filterName = "<%- filterName %>",
+        urlPatterns = {<%- urlPatterns.map(pattern => `"${pattern}"`).join(', ') %>},<% if (typeof initParam !== 'undefined' && initParam.length > 0) { %>
+        initParams = {<% initParam.forEach((param) => { %>
+                @WebInitParam(name = "<%- param.paramName %>", value = "<%- param.paramValue %>"),<% }) %>
+        }<% } %>
+)

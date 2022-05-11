@@ -7,8 +7,11 @@ import glob from 'glob-promise';
 import commonPathPrefix from 'common-path-prefix';
 import { pascalCase } from 'pascal-case';
 import fs from 'node:fs';
+import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import replaceInFilePkg from 'replace-in-file';
+import camelcaseKeys from 'camelcase-keys';
+import { Filter, WebApp, WebXml } from './web-xml';
 
 const {replaceInFile} = replaceInFilePkg
 
@@ -21,10 +24,33 @@ export async function bootify(webModule: string): Promise<void> {
         // 共用常數
         const moduleRoot = process.cwd()
         const pom = readXml('./pom.xml')
+        const webXml = readXml('./src/main/webapp/WEB-INF/web.xml')
         const isWebModule = pom.project.artifactId.endsWith('-web')
         const isWebServiceModule = pom.project.artifactId.endsWith('-webservice')
 
         let simpleGit = git;
+
+        // 如果是 xxx-web 模組，要移轉自訂 Filter
+        if (isWebModule) {
+            const webApp = (camelcaseKeys(webXml, {deep: true}) as WebXml).webApp
+
+            await webApp
+                .filter
+                .filter(filter => filter.filterClass.startsWith(`gov.fdc.${pom.project.parent.artifactId}`))
+                .reduce(async (previousPromise: Promise<string[]>, filter) => {
+                        const previousTouchedFiles = await previousPromise;
+                        return updateFilter(filter, webApp)
+                            .then(touchedFiles => [...previousTouchedFiles, ...touchedFiles])
+                    }, Promise.resolve([])
+                )
+                .then(touchedFiles => {
+                    for (let touchedFile of touchedFiles) {
+                        console.log(` - 將 ${touchedFile} 標上 @WebFilter`)
+                        simpleGit = simpleGit.add(path.resolve(touchedFile))
+                    }
+                })
+                .catch(console.error)
+        }
 
         // 如果是 web-service 模組，需要先確認 dependencies 有沒有 cxf-spring-boot-starter-jaxws
         if (isWebServiceModule &&
@@ -140,4 +166,46 @@ export async function bootify(webModule: string): Promise<void> {
     } finally {
         process.chdir(projectRoot)
     }
+}
+
+function updateFilter(filter: Filter, webApp: WebApp): Promise<string[]> {
+    const filterFile = `src/main/java/${filter.filterClass.replaceAll('\.', '/')}.java`;
+
+    function touchFile(content: string): Promise<string[]> | string[] {
+        if (content.indexOf('@WebFilter') == -1) {
+            return renderFile(
+                '/template/web-filter-annotation.java.ejs',
+                {
+                    ...filter,
+                    urlPatterns: webApp.filterMapping
+                        .filter((mapping: any) => mapping.filterName === filter.filterName)
+                        .map((mapping: any) => mapping.urlPattern)
+                })
+                .then(annotation => {
+                    return content.replace(
+                        /\r?\n(\s*public\s*class)/g,
+                        `${annotation}$1`)
+                })
+                .then(annotatedContent => {
+                    let imports = 'import javax.servlet.annotation.WebFilter;\n'
+                    if (annotatedContent.indexOf('@WebInitParam') >= 0) {
+                        imports += 'import javax.servlet.annotation.WebInitParam;\n'
+                    }
+                    annotatedContent = annotatedContent
+                        .replace(/((:?import javax\.servlet\.[A-Z].*;\r?\n)+)/, '$1' + imports)
+                    return fsPromises.writeFile(filterFile, annotatedContent)
+                        .then(() => [filterFile])
+                })
+
+        } else {
+            // 已經有 @WebFilter，不需要再更新
+            return []
+        }
+    }
+
+    console.debug(process.cwd())
+
+    return fsPromises
+        .readFile(filterFile, 'utf8')
+        .then(touchFile)
 }
