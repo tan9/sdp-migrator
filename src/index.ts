@@ -188,7 +188,7 @@ await Promise.resolve(
 
 // 針對 Web 模組一個一個 Spring Bootify
 const webModules = glob
-    .sync('**/web.xml')
+    .sync('**/src/main/webapp/WEB-INF/web.xml')
     .map(webModule => webModule.substring(0, webModule.indexOf('/')))
     .filter(webModule => pom.project.modules.module.includes(webModule))
 
