@@ -10,6 +10,8 @@ import glob from 'glob-promise';
 
 const {replaceInFile, replaceInFileSync} = replaceInFilePkg
 
+const targetSdpVersion = '3.0.0-SNAPSHOT'
+
 // 列印 banner
 console.log(
     figlet.textSync('SDP Migrator') + '\n'
@@ -52,11 +54,11 @@ console.log(`開始對 ${projectId} 應用系統進行 SDP 升版...\n`)
 await replaceInFile({
     files: '**/pom.xml',
     from: /(<parent>.*<artifactId>fdc<\/artifactId>.*<version>).*?(<\/version>.*<\/parent>)/s,
-    to: '$13.0.0-SNAPSHOT$2',
+    to: '$1' +targetSdpVersion + '$2',
     allowEmptyPaths: true,
 })
     .then(
-        commitReplacedResults('將 Parent POM 更新為 3.0.0-SNAPSHOT')
+        commitReplacedResults(`將 Parent POM 更新為 ${targetSdpVersion}`)
     )
     .catch(error => {
         exit(MIGRATE_ERROR, `更新 parent POM 版本時發生錯誤: ${error}`)
