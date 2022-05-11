@@ -132,16 +132,17 @@ await replaceInFile({
     })
 
 await replaceInFile({
-    files: `**/src/**/${projectId}-beans-config.xml`,
+    files: `**/src/**/${projectId}*-beans-config.xml`,
     from: new RegExp(`^([ \\t\\r\\n]*)([ \\t]*?<!--.+?-->[ \\t\\r\\n]*?)?[ \\t]+?<context:component-scan\\s+base-package="gov\\.fdc\\.${projectId}"[\\s\\S]*?<\\/context:component-scan>[\\s\\n\\r]*$\\n`, 'gm'),
     to: '\n\n',
     allowEmptyPaths: true,
+    ignore: [`**/classes/**/${projectId}*-beans-config.xml`],
 })
     .then(
-        commitReplacedResults(`移除 ${projectId}-beans-config.xml 裡的 component-scan 設定`)
+        commitReplacedResults(`移除 beans config 裡的 component-scan 設定`)
     )
     .catch(error => {
-        exit(MIGRATE_ERROR, `移除 ${projectId}-beans-config.xml 裡的 component-scan 設定時發生錯誤: ${error}`)
+        exit(MIGRATE_ERROR, `移除 beans config 裡的 component-scan 設定時發生錯誤: ${error}`)
     })
 
 // 刪除專案中不必要的設定檔
