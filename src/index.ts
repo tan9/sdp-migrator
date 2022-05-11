@@ -258,3 +258,16 @@ await replaceInFile({
         exit(MIGRATE_ERROR, `${projectId}-scheduler-beans-config 改用新整 Spring Quartz 整合機制時發生錯誤: ${error}`)
     })
 
+// 修正 jsp invalid import 錯誤
+await replaceInFile({
+    files: '**/src/**/*.jsp',
+    from: /(import="[a-zA-Z.*,\s]+);/,
+    to: '$1',
+    allowEmptyPaths: true,
+})
+    .then(
+        commitReplacedResults(`修正 jsp import 結尾包含 ; 的問題`))
+    .catch(error => {
+        exit(MIGRATE_ERROR, `修正 jsp import 結尾包含 ; 的問題時發生錯誤: ${error}`)
+    })
+
