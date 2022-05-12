@@ -1,97 +1,87 @@
-import { ReplaceResult } from 'replace-in-file';
-import simpleGit from 'simple-git';
-import fs from 'node:fs';
+import { ReplaceResult } from "replace-in-file";
+import simpleGit from "simple-git";
+import fs from "node:fs";
 
-export const git = simpleGit()
+export const git = simpleGit();
 
-export function commitReplacedResults(operationName: string): (results: ReplaceResult[]) => ReplaceResult[] | Promise<ReplaceResult[]> {
+export function commitReplacedResults(
+    operationName: string
+): (results: ReplaceResult[]) => ReplaceResult[] | Promise<ReplaceResult[]> {
     return (results) => {
         console.log(operationName);
 
-        const changedFiles = results.filter(result => result.hasChanged)
+        const changedFiles = results.filter((result) => result.hasChanged);
         if (changedFiles.length > 0) {
             let simpleGit = git;
-            changedFiles.forEach(
-                changedFile => {
-                    console.log(` - ${changedFile.file} 修改完成`)
-                    simpleGit = simpleGit.add(changedFile.file)
-                }
-            );
+            changedFiles.forEach((changedFile) => {
+                console.log(` - ${changedFile.file} 修改完成`);
+                simpleGit = simpleGit.add(changedFile.file);
+            });
             const commitMessage = `${operationName}。`;
-            return simpleGit.commit(commitMessage)
-                .then(result => {
-                    console.log(` - 將以上 ${changedFiles.length} 個檔案的異動 commit 完成`)
-                    return changedFiles
-                })
-
+            return simpleGit.commit(commitMessage).then((result) => {
+                console.log(` - 將以上 ${changedFiles.length} 個檔案的異動 commit 完成`);
+                return changedFiles;
+            });
         } else {
-            console.log(` - 沒有檔案需要異動`)
+            console.log(` - 沒有檔案需要異動`);
         }
         return changedFiles;
-    }
+    };
 }
 
 export function deleteFilesAndCommit(operationName: string): (filesToBeDeleted: string[]) => Promise<string[]> {
     return (filesToBeDeleted) => {
-        console.log(operationName)
+        console.log(operationName);
 
         if (filesToBeDeleted.length > 0) {
             let simpleGit = git;
-            filesToBeDeleted.forEach(
-                fileToBeDeleted => {
-                    console.log(` - 將 ${fileToBeDeleted} 標記為刪除`)
-                    simpleGit = simpleGit.rm(fileToBeDeleted)
-                }
-            );
+            filesToBeDeleted.forEach((fileToBeDeleted) => {
+                console.log(` - 將 ${fileToBeDeleted} 標記為刪除`);
+                simpleGit = simpleGit.rm(fileToBeDeleted);
+            });
             const commitMessage = `${operationName}。`;
-            return simpleGit.commit(commitMessage)
-                .then(result => {
-                    console.log(` - 將刪除以上 ${filesToBeDeleted.length} 個檔案的異動 commit 完成`)
-                    return filesToBeDeleted
-                })
-
+            return simpleGit.commit(commitMessage).then((result) => {
+                console.log(` - 將刪除以上 ${filesToBeDeleted.length} 個檔案的異動 commit 完成`);
+                return filesToBeDeleted;
+            });
         } else {
-            console.log(` - 沒有檔案需要刪除`)
+            console.log(` - 沒有檔案需要刪除`);
         }
 
-        return Promise.resolve(filesToBeDeleted)
-    }
+        return Promise.resolve(filesToBeDeleted);
+    };
 }
 
 export type FileMove = {
-    from: string,
-    to: string,
-}
+    from: string;
+    to: string;
+};
 
 export function moveFilesAndCommit(operationName: string): (files: FileMove[]) => Promise<FileMove[]> {
     return (files) => {
-        console.log(operationName)
+        console.log(operationName);
 
         if (files.length > 0) {
             let simpleGit = git;
-            files.forEach(
-                file => {
-                    const targetPath = file.to.substring(0, file.to.lastIndexOf('/'))
-                    try {
-                        fs.accessSync(targetPath)
-                    } catch (e) {
-                       fs.mkdirSync(targetPath)
-                    }
-                    console.log(` - 將 ${file.from} 更名為 ${file.to}`)
-                    simpleGit = simpleGit.mv(file.from, file.to)
+            files.forEach((file) => {
+                const targetPath = file.to.substring(0, file.to.lastIndexOf("/"));
+                try {
+                    fs.accessSync(targetPath);
+                } catch (e) {
+                    fs.mkdirSync(targetPath);
                 }
-            );
+                console.log(` - 將 ${file.from} 更名為 ${file.to}`);
+                simpleGit = simpleGit.mv(file.from, file.to);
+            });
             const commitMessage = `${operationName}。`;
-            return simpleGit.commit(commitMessage)
-                .then(result => {
-                    console.log(` - 將以上 ${files.length} 個檔案的更名異動 commit 完成`)
-                    return files
-                })
-
+            return simpleGit.commit(commitMessage).then((result) => {
+                console.log(` - 將以上 ${files.length} 個檔案的更名異動 commit 完成`);
+                return files;
+            });
         } else {
-            console.log(` - 沒有檔案需要搬移`)
+            console.log(` - 沒有檔案需要搬移`);
         }
 
-        return Promise.resolve(files)
-    }
+        return Promise.resolve(files);
+    };
 }
