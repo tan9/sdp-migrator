@@ -205,7 +205,7 @@ await replaceInFile({
 })
     .then(
         results => {
-            let changed = results
+            const changed = results
                 .filter(result => result.hasChanged);
 
             changed.forEach(

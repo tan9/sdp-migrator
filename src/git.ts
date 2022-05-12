@@ -17,7 +17,7 @@ export function commitReplacedResults(operationName: string): (results: ReplaceR
                     simpleGit = simpleGit.add(changedFile.file)
                 }
             );
-            let commitMessage = `${operationName}。`;
+            const commitMessage = `${operationName}。`;
             return simpleGit.commit(commitMessage)
                 .then(result => {
                     console.log(` - 將以上 ${changedFiles.length} 個檔案的異動 commit 完成`)
@@ -43,7 +43,7 @@ export function deleteFilesAndCommit(operationName: string): (filesToBeDeleted: 
                     simpleGit = simpleGit.rm(fileToBeDeleted)
                 }
             );
-            let commitMessage = `${operationName}。`;
+            const commitMessage = `${operationName}。`;
             return simpleGit.commit(commitMessage)
                 .then(result => {
                     console.log(` - 將刪除以上 ${filesToBeDeleted.length} 個檔案的異動 commit 完成`)
@@ -71,7 +71,7 @@ export function moveFilesAndCommit(operationName: string): (files: FileMove[]) =
             let simpleGit = git;
             files.forEach(
                 file => {
-                    let targetPath = file.to.substring(0, file.to.lastIndexOf('/'))
+                    const targetPath = file.to.substring(0, file.to.lastIndexOf('/'))
                     try {
                         fs.accessSync(targetPath)
                     } catch (e) {
@@ -81,7 +81,7 @@ export function moveFilesAndCommit(operationName: string): (files: FileMove[]) =
                     simpleGit = simpleGit.mv(file.from, file.to)
                 }
             );
-            let commitMessage = `${operationName}。`;
+            const commitMessage = `${operationName}。`;
             return simpleGit.commit(commitMessage)
                 .then(result => {
                     console.log(` - 將以上 ${files.length} 個檔案的更名異動 commit 完成`)

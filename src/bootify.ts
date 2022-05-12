@@ -44,7 +44,7 @@ export async function bootify(webModule: string): Promise<void> {
                     }, Promise.resolve([])
                 )
                 .then(touchedFiles => {
-                    for (let touchedFile of touchedFiles) {
+                    for (const touchedFile of touchedFiles) {
                         console.log(` - 將 ${touchedFile} 標上 @WebFilter`)
                         simpleGit = simpleGit.add(path.resolve(touchedFile))
                     }
