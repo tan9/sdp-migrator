@@ -172,7 +172,7 @@ function updateFilter(filter: Filter, webApp: WebApp): Promise<string[]> {
     const filterFile = `src/main/java/${filter.filterClass.replaceAll('\.', '/')}.java`;
 
     function touchFile(content: string): Promise<string[]> | string[] {
-        if (content.indexOf('@WebFilter') == -1) {
+        if (content.indexOf('@WebFilter') === -1) {
             return renderFile(
                 '/template/web-filter-annotation.java.ejs',
                 {
