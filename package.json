@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "ts-node src/index.ts",
-    "build": "npx tsc -p .",
+    "build": "tsc -p .",
     "build:watch": "tsc --watch -p .",
     "lint": "tslint -c tslint.json -p tsconfig.json src/**/*.ts",
     "lint:fix": "tslint -c tslint.json -p tsconfig.json src/**/*.ts --fix",
